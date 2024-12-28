@@ -1,4 +1,4 @@
-import { Schema, model, mongoose } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 const userSchema = new Schema({
   name: { type: String, required: true },
@@ -6,6 +6,6 @@ const userSchema = new Schema({
   blockchainAddress: { type: String, required: true }
 });
 
-const User = mongoose.models.User || model('Users', userSchema);
+const User = models.User || model('Users', userSchema);
 
 export default User;

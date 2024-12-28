@@ -1,14 +1,10 @@
 const mongoose = require('mongoose');
-const uri = "mongodb://root:password@127.0.0.1/";
+const uri = "mongodb://localhost:27017";
 const connectDB = async () => {
     try {
-        await mongoose.connect(uri , 
-        {useNewUrlParser: true, 
-        useUnifiedTopology: true
-    });
-    console.log("MongoDB Connected")
-    }
-    catch (error) {
+        await mongoose.connect(uri);
+        console.log("MongoDB Connected");
+    } catch (error) {
         console.error(error.message);
         process.exit(1);
     } 

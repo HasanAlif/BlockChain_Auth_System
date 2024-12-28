@@ -12,7 +12,57 @@ function Homepage(){
 
 
   async function handleMetamaskLogin() {
-    
+    try {
+      
+      if (!isMetamaskInstalled) {
+        throw new Error('Metamask is not installed');
+      }
+
+      
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      console.log(address);
+      
+      const response = await fetch('/api/nonce', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ address }),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        console.log(error);
+      }
+      const resp = await response.json();
+      const nonce = resp.message;
+      console.log(nonce);
+
+      const signedMessage = await signer.signMessage(nonce);
+      const data = { signedMessage, nonce, address };
+      const authResponse = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      let token = await authResponse.json();
+      console.log(token);
+
+      
+      localStorage.setItem(address, token.token);
+
+      
+      window.location.href = '/protected-route';
+    } catch (error) {
+      console.error(error);
+      alert('Failed to login with Metamask');
+    }
   }
 
 
